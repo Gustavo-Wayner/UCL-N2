@@ -44,12 +44,5 @@ namespace UCL_N2
             win.Show();
             this.Close();
         }
-
-        private void AddToSubject(object sender, RoutedEventArgs e)
-        {
-            EnrollWindow win = new EnrollWindow();
-            win.Show();
-            this.Close();
-        }
     }
 }

@@ -11,7 +11,7 @@
           ItemsSource="{Binding cadastros}"
           AutoGenerateColumns="False"
           IsReadOnly="False"
-          Margin="10,62,317,20">
+          Margin="0,58,0,10">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Id"
@@ -21,6 +21,7 @@
 
                 <DataGridTextColumn Header="Nome"
                             Binding="{Binding Nome}"
+                            IsReadOnly="True"
                             Width="*" />
 
                 <DataGridTemplateColumn Header="Papel" Width="140">

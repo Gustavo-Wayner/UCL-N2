@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,11 +13,9 @@ using System.Windows.Shapes;
 
 namespace UCL_N2
 {
-    /// <summary>
-    /// Interaction logic for AddSubjectWindow.xaml
-    /// </summary>
     public partial class AddSubjectWindow : Window
     {
+        public ObservableCollection<Materia> materias { get; } = new();
         public AddSubjectWindow()
         {
             InitializeComponent();
