@@ -1,0 +1,14 @@
+CREATE TABLE Cadastros
+(
+    Id      INTEGER PRIMARY INCREMENT AUTOINCREMENT,
+    Nome    TEXT NOT NULL UNIQUE,
+    Papel   TEXT NOT NULL
+);
+
+CREATE TABLE Materias
+(
+    Id          INTEGER PRIMARY INCREMENT AUTOINCREMENT,
+    Titulo      TEXT NOT NULL,
+    Professor   TEXT NOT NULL,
+    Turma       TEXT NOT NULL
+);

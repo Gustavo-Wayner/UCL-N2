@@ -1,0 +1,17 @@
+﻿<Window x:Class="UCL_N2.AdminWindow"
+        x:Name="AdminRoot"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UCL_N2"
+        mc:Ignorable="d"
+        Title="AdminWindow" Height="450" Width="800">
+    <Grid>
+        <Button Content="Ir para a tela de cadastros" HorizontalAlignment="Center" Margin="0,128,0,0" VerticalAlignment="Top" Height="56" FontSize="26" Click="AddUser" Width="346"/>
+        <Button Content="Adicionar materia" HorizontalAlignment="Center" VerticalAlignment="Top" Height="56" FontSize="26" Click="AddSubject" Width="346" Margin="0,217,0,0"/>
+
+        <Button Content="Logout" HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Height="26" FontSize="16" Click="OnLogout"/>
+
+    </Grid>
+</Window>
