@@ -13,3 +13,26 @@ CREATE TABLE Materias
     Turma        TEXT NOT NULL,
     FOREIGN KEY (ProfessorId) REFERENCES Cadastros(Id)
 );
+
+CREATE TABLE Matriculas
+(
+    Id              INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    AlunoId         INTEGER NOT NULL,
+    MateriaId       INTEGER NOT NULL,
+
+    N1              REAL,
+    P1              REAL,
+    N2              REAL,
+    P2              REAL,
+
+    FaltasPercent   REAL,
+
+    Media           Real,
+    Estado          TEXT CHECK (Estado IN ('Aprovado', 'Reprovado') OR Estado IS NULL),
+
+    UNIQUE (AlunoId, MateriaId),
+
+    FOREIGN KEY (AlunoId)  REFERENCES Cadastros(Id),
+    FOREIGN KEY (MateriaId) REFERENCES Materias(Id)
+);
