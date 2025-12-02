@@ -36,8 +36,9 @@ namespace UCL_N2
                     (
                         Id          INTEGER PRIMARY KEY AUTOINCREMENT,
                         Titulo      TEXT NOT NULL,
-                        Professor   TEXT NOT NULL,
-                        Turma       TEXT NOT NULL
+                        ProfessorId  INTEGER NOT NULL,
+                        Turma        TEXT NOT NULL,
+                        FOREIGN KEY (ProfessorId) REFERENCES Cadastros(Id)
                     );
                 ";
 

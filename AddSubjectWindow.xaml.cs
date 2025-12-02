@@ -32,8 +32,9 @@ namespace UCL_N2
                 (
                     Id          INTEGER PRIMARY KEY AUTOINCREMENT,
                     Titulo      TEXT NOT NULL,
-                    Professor   TEXT NOT NULL,
-                    Turma       TEXT NOT NULL
+                    ProfessorId  INTEGER NOT NULL,
+                    Turma        TEXT NOT NULL,
+                    FOREIGN KEY (ProfessorId) REFERENCES Cadastros(Id)
                 );
             ";
             command.ExecuteNonQuery();
@@ -65,10 +66,10 @@ namespace UCL_N2
             }
 
             using var command = connection.CreateCommand();
-            command.CommandText = "INSERT INTO Materias (Titulo, Professor, Turma) VALUES ($titulo, $prof, $turma);";
+            command.CommandText = "INSERT INTO Materias (Titulo, ProfessorId, Turma) VALUES ($titulo, $prof, $turma);";
 
             command.Parameters.AddWithValue("$titulo", InputTitulo.Text.Trim());
-            command.Parameters.AddWithValue("$prof", InputProf.Text.Trim());
+            command.Parameters.AddWithValue("$prof", GetProfId(connection, InputProf.Text.Trim()));
             command.Parameters.AddWithValue("$turma", InputTurma.Text.Trim());
 
             command.ExecuteNonQuery();
@@ -76,6 +77,20 @@ namespace UCL_N2
             InputProf.Text = string.Empty;
             InputTurma.Text = string.Empty;
             LoadSubjects();
+        }
+
+        private int GetProfId(SqliteConnection conn, string nome)
+        {
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT Id FROM Cadastros WHERE Nome = $nome";
+            cmd.Parameters.AddWithValue("$nome", nome);
+
+            object? result = cmd.ExecuteScalar();
+
+            if (result == null)
+                throw new Exception($"Professor {nome} não existe.");
+
+            return Convert.ToInt32(result);
         }
 
         public void LoadSubjects()
@@ -86,7 +101,12 @@ namespace UCL_N2
             connection.Open();
 
             using var command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM Materias";
+
+            command.CommandText = @"
+                SELECT m.Id, m.Titulo, c.Nome AS ProfessorNome, m.Turma
+                FROM Materias m
+                JOIN Cadastros c ON m.ProfessorId = c.Id;
+            ";
 
             using var reader = command.ExecuteReader();
 
@@ -103,6 +123,7 @@ namespace UCL_N2
                 materias.Add(m);
             }
         }
+
 
         private void OnLogout(object sender, RoutedEventArgs e)
         {
