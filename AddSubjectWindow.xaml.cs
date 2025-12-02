@@ -16,6 +16,7 @@ namespace UCL_N2
 {
     public partial class AddSubjectWindow : Window
     {
+        public List<SqliteCommand> Commands = new();
         public ObservableCollection<Materia> materias { get; } = new();
         public AddSubjectWindow()
         {
@@ -139,6 +140,7 @@ namespace UCL_N2
             {
                 e.Handled = true;
                 var selected = GridCadastros.SelectedItem as Materia;
+                if (selected == null) return;
 
                 using var connection = new SqliteConnection("Data Source=tables.db");
                 connection.Open();
@@ -151,6 +153,11 @@ namespace UCL_N2
 
                 LoadSubjects();
             }
+        }
+
+        private void OnPressSave(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 }

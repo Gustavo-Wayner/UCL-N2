@@ -18,6 +18,9 @@ namespace UCL_N2
         public LoginWindow()
         {
             InitializeComponent();
+            Atual.materia = null;
+            Atual.materias = null;
+            Atual.Usuario = null;
 
             using SqliteConnection connection = new SqliteConnection("Data Source=tables.db");
             connection.Open();
@@ -39,6 +42,29 @@ namespace UCL_N2
                         ProfessorId  INTEGER NOT NULL,
                         Turma        TEXT NOT NULL,
                         FOREIGN KEY (ProfessorId) REFERENCES Cadastros(Id)
+                    );
+
+                    CREATE TABLE IF NOT EXISTS Matriculas
+                    (
+                        Id              INTEGER PRIMARY KEY AUTOINCREMENT,
+
+                        AlunoId         INTEGER NOT NULL,
+                        MateriaId       INTEGER NOT NULL,
+
+                        N1              REAL,
+                        P1              REAL,
+                        N2              REAL,
+                        P2              REAL,
+
+                        FaltasPcnt   REAL,
+
+                        Media           Real,
+                        Estado          TEXT CHECK (Estado IN ('Aprovado', 'Reprovado') OR Estado IS NULL),
+
+                        UNIQUE (AlunoId, MateriaId),
+
+                        FOREIGN KEY (AlunoId)  REFERENCES Cadastros(Id),
+                        FOREIGN KEY (MateriaId) REFERENCES Materias(Id)
                     );
                 ";
 
@@ -99,21 +125,21 @@ namespace UCL_N2
 
                 if (Atual.Usuario.Papel == "Admin")
                 {
-                    AdminWindow win = new AdminWindow();
+                    AdminWindow win = new();
                     win.Show();
                     this.Close();
                 }
 
                 else if(Atual.Usuario.Papel == "Aluno")
                 {
-                    GradesWindow win = new GradesWindow();
+                    GradesWindow win = new();
                     win.Show();
                     this.Close();
                 }
 
                 else if (Atual.Usuario.Papel == "Professor")
                 {
-                    ProfessorWindow win = new ProfessorWindow();
+                    SubjectSelectWindow win = new();
                     win.Show();
                     this.Close();
                 }

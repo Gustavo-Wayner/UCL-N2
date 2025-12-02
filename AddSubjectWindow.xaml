@@ -30,16 +30,17 @@
                     Width="*" />
             </DataGrid.Columns>
         </DataGrid>
-        <Button Content="Adicionar" HorizontalAlignment="Right" Margin="0,50,10,0" VerticalAlignment="Top" Height="26" FontSize="16" Click="OnPressAdd"/>
+        <Button Content="Adicionar" HorizontalAlignment="Left" Margin="395,44,0,0" VerticalAlignment="Top" Height="26" FontSize="16" Click="OnPressAdd"/>
         <Button Content="Logout" HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Height="26" FontSize="16" Click="OnLogout"/>
-        
+
         <TextBlock HorizontalAlignment="Left" Margin="395,12,0,0" TextWrapping="Wrap" Text="Turma:" VerticalAlignment="Top" FontSize="16"/>
         <TextBlock HorizontalAlignment="Left" Margin="25,12,0,0" TextWrapping="Wrap" Text="Título:" VerticalAlignment="Top" FontSize="16"/>
         <TextBlock HorizontalAlignment="Left" Margin="25,46,0,0" TextWrapping="Wrap" Text="Professor:" VerticalAlignment="Top" FontSize="16"/>
-        
+
         <TextBox x:Name="InputTitulo" HorizontalAlignment="Left" Margin="96,10,0,0" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Top" Width="269" Height="26" TextAlignment="Justify"/>
         <TextBox x:Name="InputProf" HorizontalAlignment="Left" Margin="96,44,0,0" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Top" Width="269" Height="26" TextAlignment="Justify"/>
         <TextBox x:Name="InputTurma" HorizontalAlignment="Left" Margin="448,10,0,0" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Top" Width="269" Height="26" TextAlignment="Justify"/>
+        <Button Content="Salvar" HorizontalAlignment="Right" Margin="0,50,10,0" VerticalAlignment="Top" Height="26" FontSize="16" Click="OnPressSave"/>
 
     </Grid>
 </Window>

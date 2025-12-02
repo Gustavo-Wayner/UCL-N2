@@ -26,7 +26,7 @@ CREATE TABLE Matriculas
     N2              REAL,
     P2              REAL,
 
-    FaltasPercent   REAL,
+    FaltasPcnt   REAL,
 
     Media           Real,
     Estado          TEXT CHECK (Estado IN ('Aprovado', 'Reprovado') OR Estado IS NULL),

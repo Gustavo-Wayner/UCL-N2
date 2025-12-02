@@ -18,5 +18,7 @@ namespace UCL_N2
     public static class Atual
     {
         public static Cadastro? Usuario;
+        public static List<Materia>? materias;
+        public static Materia? materia;
     }
 }

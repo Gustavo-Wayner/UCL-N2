@@ -1,0 +1,80 @@
+﻿using Microsoft.Data.Sqlite;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+namespace UCL_N2
+{
+    public partial class SubjectSelectWindow : Window
+    {
+        public List<string> DisplaySubjects = new();
+        public SubjectSelectWindow()
+        {
+            InitializeComponent();
+            Atual.materias = new();
+
+            DisplaySubjects.Add("");
+            MateriasDropDown.ItemsSource = DisplaySubjects;
+            MateriasDropDown.SelectedIndex = 0;
+        }
+
+        public void LoadTeacherSubjects()
+        {
+            DisplaySubjects.Clear();
+            DisplaySubjects.Add("");
+            Atual.materias?.Clear();
+
+            using var connection = new SqliteConnection("Data source=tables.db");
+            connection.Open();
+
+            using var command = connection.CreateCommand();
+            command.CommandText = @"
+                SELECT m.Id, m.Titulo, c.Nome AS ProfessorNome, m.Turma
+                FROM Materias m
+                JOIN Cadastros c ON m.ProfessorId = c.Id;
+            ";
+
+            command.Parameters.AddWithValue("$id", Atual.Usuario?.Id);
+
+            using var reader = command.ExecuteReader();
+
+            while(reader.Read())
+            {
+                Materia m = new Materia
+                {
+                    Id = reader.GetInt32(0),
+                    Titulo = reader.GetString(1),
+                    Professor = reader.GetString(2),
+                    Turma = reader.GetString(3)
+                };
+
+                Atual.materias!.Add(m);
+                DisplaySubjects.Add($"{m.Titulo} - {m.Turma}");
+            }
+        }
+
+        private void OnProceed(object sender, RoutedEventArgs e)
+        {
+            Atual.materia = Atual.materias[MateriasDropDown.SelectedIndex];
+            GradesWindow win = new();
+            win.Show();
+            this.Close();
+        }
+
+        private void OnLogout(object sender, RoutedEventArgs e)
+        {
+            LoginWindow win = new();
+            win.Show();
+            this.Close();
+        }
+    }
+}

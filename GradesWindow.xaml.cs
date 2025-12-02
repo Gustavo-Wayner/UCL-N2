@@ -19,5 +19,12 @@ namespace UCL_N2
         {
             InitializeComponent();
         }
+
+        private void OnReturn(object sender, RoutedEventArgs e)
+        {
+            SubjectSelectWindow win = new();
+            win.Show();
+            this.Close();
+        }
     }
 }

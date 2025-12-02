@@ -164,26 +164,43 @@ namespace UCL_N2
                 using var connection = new SqliteConnection("Data Source=tables.db");
                 connection.Open();
 
+                using var tx = connection.BeginTransaction();
                 using var command = connection.CreateCommand();
+                command.Transaction = tx;
                 command.CommandText = "SELECT COUNT(*) FROM Cadastros WHERE Papel = 'Admin';";
                 long admins = (long)command.ExecuteScalar()!;
-
                 if (admins == 1 && selected!.Papel == "Admin")
                 {
                     MessageBox.Show("É necessário que haja no mínimo um admin!");
                     return;
                 }
 
-                command.CommandText = "DELETE FROM Cadastros WHERE Id = $id;";
+                // 1) Apagar matrículas das matérias desse professor (se tiver Matriculas)
+                command.CommandText = @"
+                    DELETE FROM Matriculas
+                    WHERE MateriaId IN (SELECT Id FROM Materias WHERE ProfessorId = $id);
+                ";
                 command.Parameters.AddWithValue("$id", selected!.Id);
                 command.ExecuteNonQuery();
 
-                command.CommandText = "DELETE FROM Materias WHERE Professor = $nome;";
-                command.Parameters.AddWithValue("$nome", selected.Nome);
+                // 2) Apagar matérias do professor
+                command.CommandText = "DELETE FROM Materias WHERE ProfessorId = $id;";
                 command.ExecuteNonQuery();
 
+                // 3) Agora sim, apagar o próprio cadastro
+                command.CommandText = "DELETE FROM Cadastros WHERE Id = $id;";
+                command.ExecuteNonQuery();
+
+                tx.Commit();
                 LoadUsers();
             }
+        }
+
+        private void OnReturn(object sender, RoutedEventArgs e)
+        {
+            AdminWindow win = new();
+            win.Show();
+            this.Close();
         }
     }
 }
