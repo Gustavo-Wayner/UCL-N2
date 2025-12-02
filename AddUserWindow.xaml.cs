@@ -34,6 +34,20 @@ namespace UCL_N2
             DataContext = this;
             LoadUsers();
 
+            using var connection = new SqliteConnection("Data Source=tables.db");
+            connection.Open();
+
+            using var command = connection.CreateCommand();
+            command.CommandText = @"
+                CREATE TABLE IF NOT EXISTS Cadatros
+                (
+                    Id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Nome        TEXT NOT NULL,
+                    Papel       TEXT NOT NULL
+                );
+            ";
+            command.ExecuteNonQuery();
+
             PapelDropDown.ItemsSource = Papeis;
             PapelDropDown.SelectedIndex = 0;
         }
@@ -46,7 +60,7 @@ namespace UCL_N2
             connection.Open();
 
             using var command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM Cadastros";
+            command.CommandText = "SELECT * FROM Cadastros ORDER BY Papel";
 
             using var reader = command.ExecuteReader();
 
@@ -95,17 +109,14 @@ namespace UCL_N2
 
         public void OnEditPapel(object sender, SelectionChangedEventArgs e)
         {
-            // Garantir que veio de um ComboBox da linha
             if (sender is not ComboBox combo || combo.DataContext is not Cadastro selected)
                 return;
 
-            // Novo papel selecionado
             string? novoPapel = combo.SelectedItem as string;
 
-            // Papel ANTERIOR (vem do SelectionChanged)
             string? papelAnterior = e.RemovedItems.Count > 0
                 ? e.RemovedItems[0] as string
-                : selected.Papel; // fallback
+                : selected.Papel;
 
             if (string.IsNullOrWhiteSpace(novoPapel))
             {
@@ -117,34 +128,62 @@ namespace UCL_N2
             using var connection = new SqliteConnection("Data Source=tables.db");
             connection.Open();
 
-            // Se está tirando o papel de Admin de alguém
             if (papelAnterior == "Admin" && novoPapel != "Admin")
             {
                 using var cmdCount = connection.CreateCommand();
                 cmdCount.CommandText = "SELECT COUNT(*) FROM Cadastros WHERE Papel = 'Admin';";
                 long admins = (long)cmdCount.ExecuteScalar()!;
 
-                // Se só existia esse admin, não deixa mudar
                 if (admins <= 1)
                 {
                     MessageBox.Show("É necessário que haja no mínimo um admin!");
 
-                    // Volta visualmente e no objeto
                     combo.SelectedItem = papelAnterior;
                     selected.Papel = papelAnterior;
                     return;
                 }
             }
 
-            // Atualiza o objeto em memória
             selected.Papel = novoPapel;
 
-            // Atualiza o banco
             using var cmd = connection.CreateCommand();
             cmd.CommandText = "UPDATE Cadastros SET Papel = $papel WHERE Id = $id;";
             cmd.Parameters.AddWithValue("$papel", novoPapel);
             cmd.Parameters.AddWithValue("$id", selected.Id);
             cmd.ExecuteNonQuery();
+        }
+
+        private void OnDelPress(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                e.Handled = true;
+                var selected = GridCadastros.SelectedItem as Cadastro;
+                if (selected == null) return;
+
+                using var connection = new SqliteConnection("Data Source=tables.db");
+                connection.Open();
+
+                using var command = connection.CreateCommand();
+                command.CommandText = "SELECT COUNT(*) FROM Cadastros WHERE Papel = 'Admin';";
+                long admins = (long)command.ExecuteScalar()!;
+
+                if (admins == 1 && selected!.Papel == "Admin")
+                {
+                    MessageBox.Show("É necessário que haja no mínimo um admin!");
+                    return;
+                }
+
+                command.CommandText = "DELETE FROM Cadastros WHERE Id = $id;";
+                command.Parameters.AddWithValue("$id", selected!.Id);
+                command.ExecuteNonQuery();
+
+                command.CommandText = "DELETE FROM Materias WHERE Professor = $nome;";
+                command.Parameters.AddWithValue("$nome", selected.Nome);
+                command.ExecuteNonQuery();
+
+                LoadUsers();
+            }
         }
     }
 }

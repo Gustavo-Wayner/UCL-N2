@@ -8,21 +8,18 @@
         Title="AddUserWindow" Height="450" Width="800">
     <Grid>
         <DataGrid x:Name="GridCadastros"
-          ItemsSource="{Binding cadastros}"
-          AutoGenerateColumns="False"
-          IsReadOnly="False"
-          Margin="0,58,0,10">
+            ItemsSource="{Binding cadastros}"
+            AutoGenerateColumns="False"
+            IsReadOnly="False"
+            Margin="0,58,0,10"
+            CanUserDeleteRows="False"
+            PreviewKeyDown="OnDelPress">
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Id"
-                            Binding="{Binding Id}"
-                            IsReadOnly="True"
-                            Width="60" />
-
                 <DataGridTextColumn Header="Nome"
-                            Binding="{Binding Nome}"
-                            IsReadOnly="True"
-                            Width="*" />
+                    Binding="{Binding Nome}"
+                    IsReadOnly="True"
+                    Width="*" />
 
                 <DataGridTemplateColumn Header="Papel" Width="140">
                     <DataGridTemplateColumn.CellTemplate>
@@ -34,9 +31,9 @@
                     <DataGridTemplateColumn.CellEditingTemplate>
                         <DataTemplate>
                             <ComboBox ItemsSource="{Binding DataContext.Papeis,
-                                            RelativeSource={RelativeSource AncestorType=Window}}"
-                              SelectedItem="{Binding Papel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                      SelectionChanged="OnEditPapel"/>
+                                        RelativeSource={RelativeSource AncestorType=Window}}"
+                                SelectedItem="{Binding Papel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    SelectionChanged="OnEditPapel"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>

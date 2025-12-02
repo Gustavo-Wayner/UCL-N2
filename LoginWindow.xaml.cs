@@ -96,18 +96,29 @@ namespace UCL_N2
                     Papel = reader.GetString(2)
                 };
 
-                if (Atual.Usuario.Papel == "Admin" || Atual.Usuario.Nome == "Admin1")
+                if (Atual.Usuario.Papel == "Admin")
                 {
                     AdminWindow win = new AdminWindow();
                     win.Show();
                     this.Close();
                 }
 
-                else
+                else if(Atual.Usuario.Papel == "Aluno")
                 {
                     GradesWindow win = new GradesWindow();
                     win.Show();
                     this.Close();
+                }
+
+                else if (Atual.Usuario.Papel == "Professor")
+                {
+                    ProfessorWindow win = new ProfessorWindow();
+                    win.Show();
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Algo de errado não esta certo");
                 }
             }
         }

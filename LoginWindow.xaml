@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:UCL_N2" mc:Ignorable="d" Title="LoginWindow" Height="450" Width="800">
     <Grid>
         <TextBlock HorizontalAlignment="Center" Margin="0,134,0,0" TextWrapping="Wrap" Text="Informe seu nome" VerticalAlignment="Top" Height="28" Width="172" FontSize="20" />
-        <TextBox x:Name="Input" HorizontalAlignment="Center" Margin="0,189,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="28" Width="392" FontSize="20" KeyDown="OnEnter" />
+        <TextBox x:Name="Input" Text="" HorizontalAlignment="Center" Margin="0,189,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="28" Width="392" FontSize="20" KeyDown="OnEnter" />
 
     </Grid>
 </Window>

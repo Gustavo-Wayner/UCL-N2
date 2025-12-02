@@ -9,7 +9,7 @@ namespace UCL_N2
 
     public class Materia
     {
-        private int Id { get; set; }
+        public int Id { get; set; }
         public string Titulo { get; set; } = "";
         public string Professor { get; set; } = "";
         public string Turma { get; set; } = "";
