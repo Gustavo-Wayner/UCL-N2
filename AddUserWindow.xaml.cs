@@ -175,7 +175,6 @@ namespace UCL_N2
                     return;
                 }
 
-                // 1) Apagar matrículas das matérias desse professor (se tiver Matriculas)
                 command.CommandText = @"
                     DELETE FROM Matriculas
                     WHERE MateriaId IN (SELECT Id FROM Materias WHERE ProfessorId = $id);
@@ -183,11 +182,9 @@ namespace UCL_N2
                 command.Parameters.AddWithValue("$id", selected!.Id);
                 command.ExecuteNonQuery();
 
-                // 2) Apagar matérias do professor
                 command.CommandText = "DELETE FROM Materias WHERE ProfessorId = $id;";
                 command.ExecuteNonQuery();
 
-                // 3) Agora sim, apagar o próprio cadastro
                 command.CommandText = "DELETE FROM Cadastros WHERE Id = $id;";
                 command.ExecuteNonQuery();
 

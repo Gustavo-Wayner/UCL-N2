@@ -22,6 +22,7 @@ namespace UCL_N2
             InitializeComponent();
             Atual.materias = new();
 
+            LoadTeacherSubjects();
             DisplaySubjects.Add("");
             MateriasDropDown.ItemsSource = DisplaySubjects;
             MateriasDropDown.SelectedIndex = 0;
@@ -64,7 +65,13 @@ namespace UCL_N2
 
         private void OnProceed(object sender, RoutedEventArgs e)
         {
-            Atual.materia = Atual.materias[MateriasDropDown.SelectedIndex];
+            if (MateriasDropDown.SelectedIndex == 0)
+            {
+                MessageBox.Show("Selecione uma materia antes de prosseguir!");
+                return;
+            }
+            Console.WriteLine(MateriasDropDown.SelectedIndex);
+            Atual.materia = Atual.materias![MateriasDropDown.SelectedIndex-1];
             GradesWindow win = new();
             win.Show();
             this.Close();
