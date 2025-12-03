@@ -27,7 +27,7 @@ namespace UCL_N2
 
         private void OnLogout(object sender, RoutedEventArgs e)
         {
-            Atual.Usuario = null;
+            Persistent.Usuario = null;
             LoginWindow win = new();
             win.Show();
             this.Close();
@@ -51,7 +51,7 @@ namespace UCL_N2
                 JOIN Cadastros cProf    ON m.ProfessorId = cProf.Id
                 WHERE mat.AlunoId = $id;
             ";
-            command.Parameters.AddWithValue("$id", Atual.Usuario!.Id);
+            command.Parameters.AddWithValue("$id", Persistent.Usuario!.Id);
 
             using SqliteDataReader reader = command.ExecuteReader();
 

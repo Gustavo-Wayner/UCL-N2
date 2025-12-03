@@ -20,19 +20,17 @@ namespace UCL_N2
         public SubjectSelectWindow()
         {
             InitializeComponent();
-            Atual.materias = new();
+            Persistent.materias = new();
 
             LoadTeacherSubjects();
-            DisplaySubjects.Add("");
             MateriasDropDown.ItemsSource = DisplaySubjects;
-            MateriasDropDown.SelectedIndex = 0;
+            MateriasDropDown.SelectedIndex = -1;
         }
 
         public void LoadTeacherSubjects()
         {
             DisplaySubjects.Clear();
-            DisplaySubjects.Add("");
-            Atual.materias?.Clear();
+            Persistent.materias?.Clear();
 
             using var connection = new SqliteConnection("Data source=tables.db");
             connection.Open();
@@ -45,7 +43,7 @@ namespace UCL_N2
                 WHERE m.ProfessorId = $id;
             ";
 
-            command.Parameters.AddWithValue("$id", Atual.Usuario?.Id);
+            command.Parameters.AddWithValue("$id", Persistent.Usuario?.Id);
 
             using var reader = command.ExecuteReader();
 
@@ -60,20 +58,20 @@ namespace UCL_N2
                     ProfessorId = reader.GetInt32(4)
                 };
 
-                Atual.materias!.Add(m);
+                Persistent.materias!.Add(m);
                 DisplaySubjects.Add($"{m.Titulo} - {m.Turma}");
             }
         }
 
         private void OnProceed(object sender, RoutedEventArgs e)
         {
-            if (MateriasDropDown.SelectedIndex == 0)
+            if (MateriasDropDown.SelectedItem == null)
             {
                 MessageBox.Show("Selecione uma materia antes de prosseguir!");
                 return;
             }
             Console.WriteLine(MateriasDropDown.SelectedIndex);
-            Atual.materia = Atual.materias![MateriasDropDown.SelectedIndex - 1];
+            Persistent.materia = Persistent.materias![MateriasDropDown.SelectedIndex];
             ProfessorWindow win = new();
             win.Show();
             this.Close();

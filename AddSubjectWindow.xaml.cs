@@ -49,6 +49,9 @@ namespace UCL_N2
                 return;
             }
 
+            InputTitulo.Text = Persistent.TitleCase(InputTitulo.Text.Trim());
+            InputProf.Text = Persistent.TitleCase(InputProf.Text.Trim());
+            InputTurma.Text = Persistent.TitleCase(InputTurma.Text.Trim());
 
             using var connection = new SqliteConnection("Data Source=tables.db");
             connection.Open();
@@ -58,10 +61,26 @@ namespace UCL_N2
                 cmd.CommandText = "SELECT * FROM Cadastros WHERE Nome = $nome AND Papel = 'Professor'";
                 cmd.Parameters.AddWithValue("$nome", InputProf.Text.Trim());
 
-                using var reader = cmd.ExecuteReader();
-                if (!reader.Read())
+                using (var reader = cmd.ExecuteReader())
                 {
-                    MessageBox.Show($"Não existe nenhum(a) professor(a) chamado(a) {InputProf.Text.Trim()}!");
+                    if (!reader.Read())
+                    {
+                        MessageBox.Show($"Não existe nenhum(a) professor(a) chamado(a) {InputProf.Text.Trim()}!");
+                        return;
+                    }
+                }
+            }
+            using (var cmd = connection.CreateCommand())
+            {
+                cmd.CommandText = "SELECT * FROM Materias WHERE Titulo = $titulo AND ProfessorId = $profId AND Turma = $turma;";
+                cmd.Parameters.AddWithValue("$titulo", InputTitulo.Text);
+                cmd.Parameters.AddWithValue("$profId", GetProfId(connection, InputProf.Text));
+                cmd.Parameters.AddWithValue("$turma", InputTurma);
+
+                using SqliteDataReader compare = cmd.ExecuteReader();
+                if (compare.Read())
+                {
+                    MessageBox.Show("Essa materia ja esta registrada");
                     return;
                 }
             }
@@ -129,7 +148,7 @@ namespace UCL_N2
 
         private void OnLogout(object sender, RoutedEventArgs e)
         {
-            Atual.Usuario = null;
+            Persistent.Usuario = null;
             LoginWindow win = new LoginWindow();
             win.Show();
             this.Close();

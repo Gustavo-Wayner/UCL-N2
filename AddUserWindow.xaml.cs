@@ -85,12 +85,26 @@ namespace UCL_N2
                 return;
             }
 
+            Input.Text = Persistent.TitleCase(Input.Text.Trim());
+
             using var connection = new SqliteConnection("Data Source=tables.db");
             connection.Open();
 
+            using (var cmd = connection.CreateCommand())
+            {
+                cmd.CommandText = "SELECT * FROM Cadastros WHERE Papel = 'Aluno' AND Nome = $nome;";
+                cmd.Parameters.AddWithValue("$nome", Input.Text);
+                using SqliteDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    MessageBox.Show("Nomes repetidos não são permitidos!");
+                    return;
+                }
+            }
+
             using var command = connection.CreateCommand();
             command.CommandText = "INSERT INTO Cadastros (Nome, Papel) VALUES ($nome, $papel);";
-            command.Parameters.AddWithValue("$nome", Input.Text.Trim());
+            command.Parameters.AddWithValue("$nome", Input.Text);
             command.Parameters.AddWithValue("$papel", PapelDropDown.SelectedValue);
 
             command.ExecuteNonQuery();
@@ -101,7 +115,7 @@ namespace UCL_N2
 
         private void OnLogout(object sender, RoutedEventArgs e)
         {
-            Atual.Usuario = null;
+            Persistent.Usuario = null;
             LoginWindow win = new LoginWindow();
             win.Show();
             this.Close();

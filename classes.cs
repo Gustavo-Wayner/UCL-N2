@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace UCL_N2
 {
     public class Cadastro
@@ -16,11 +18,24 @@ namespace UCL_N2
         public int ProfessorId { get; set; }
     };
 
-    public static class Atual
+    public static class Persistent
     {
         public static Cadastro? Usuario;
         public static List<Materia>? materias;
         public static Materia? materia;
+
+        public static string TitleCase(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return s;
+            s = s.ToLower();
+            string result = char.ToUpper(s[0]).ToString();
+            for(int i = 1; i < s.Length; i++)
+            {
+                result += (s[i - 1] == ' ') ? char.ToUpper(s[i]) : s[i];
+            }
+
+            return result;
+        }
     };
 
     public class DadosBoletim

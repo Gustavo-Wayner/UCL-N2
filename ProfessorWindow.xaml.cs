@@ -52,7 +52,7 @@ namespace UCL_N2
                 JOIN Materias m         ON mat.MateriaId = m.Id
                 WHERE m.Id = $materiaId AND cAluno.Papel = 'Aluno';
             ";
-            command.Parameters.AddWithValue("$materiaId", Atual.materia!.Id);
+            command.Parameters.AddWithValue("$materiaId", Persistent.materia!.Id);
 
             using SqliteDataReader reader = command.ExecuteReader();
 
@@ -82,9 +82,48 @@ namespace UCL_N2
 
         }
 
-        private void OnAdd(object sender, RoutedEventArgs e)
+        private void OnAddPress(object sender, RoutedEventArgs e)
         {
+            AddAluno();
+        }
+        private void OnKeyPress(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
+            {
+                e.Handled = true;
+                AddAluno();
+            }
+        }
 
+        private void AddAluno()
+        {
+            if (string.IsNullOrWhiteSpace(Input.Text.Trim())) return;
+            using SqliteConnection connection = new("Data Source=tables.db");
+            connection.Open();
+
+            using SqliteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM Cadastros WHERE Papel = 'Aluno' AND Nome = $nome;";
+            command.Parameters.AddWithValue("$nome", Input.Text.Trim());
+
+            using (SqliteDataReader reader = command.ExecuteReader())
+            {
+                if (!reader.Read())
+                {
+                    MessageBox.Show($"Não existem alunos cadatrados com o nome de {Input.Text.Trim()}");
+                    return;
+                }
+            }
+
+            int Id;
+
+            using (SqliteDataReader reader = command.ExecuteReader())
+            {
+                Id = reader.GetInt32(0);
+            }
+
+            Input.Text = "";
+
+            command.CommandText = "INSERT INTO Matriculas (Student;";
         }
     }
 }

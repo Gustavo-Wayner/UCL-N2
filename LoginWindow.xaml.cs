@@ -18,9 +18,9 @@ namespace UCL_N2
         public LoginWindow()
         {
             InitializeComponent();
-            Atual.materia = null;
-            Atual.materias = null;
-            Atual.Usuario = null;
+            Persistent.materia = null;
+            Persistent.materias = null;
+            Persistent.Usuario = null;
 
             using SqliteConnection connection = new SqliteConnection("Data Source=tables.db");
             connection.Open();
@@ -100,6 +100,8 @@ namespace UCL_N2
                     return;
                 }
 
+                Input.Text = Persistent.TitleCase(Input.Text.Trim());
+
                 e.Handled = true;
 
                 using SqliteConnection connection = new SqliteConnection("Data Source=tables.db");
@@ -107,37 +109,37 @@ namespace UCL_N2
 
                 using var command = connection.CreateCommand();
                 command.CommandText = "SELECT * FROM Cadastros WHERE Nome = $name";
-                command.Parameters.AddWithValue("$name", Input.Text.Trim());
+                command.Parameters.AddWithValue("$name", Input.Text);
 
                 using var reader = command.ExecuteReader();
                 if (!reader.Read())
                 {
-                    MessageBox.Show($"O Nome {Input.Text.Trim()} não existe entre os cadastrados");
+                    MessageBox.Show($"O Nome {Input.Text} não existe entre os cadastrados");
                     return;
                 }
 
-                Atual.Usuario = new Cadastro
+                Persistent.Usuario = new Cadastro
                 {
                     Id = reader.GetInt32(0),
                     Nome = reader.GetString(1),
                     Papel = reader.GetString(2)
                 };
 
-                if (Atual.Usuario.Papel == "Admin")
+                if (Persistent.Usuario.Papel == "Admin")
                 {
                     AdminWindow win = new();
                     win.Show();
                     this.Close();
                 }
 
-                else if(Atual.Usuario.Papel == "Aluno")
+                else if(Persistent.Usuario.Papel == "Aluno")
                 {
                     GradesWindow win = new();
                     win.Show();
                     this.Close();
                 }
 
-                else if (Atual.Usuario.Papel == "Professor")
+                else if (Persistent.Usuario.Papel == "Professor")
                 {
                     SubjectSelectWindow win = new();
                     win.Show();

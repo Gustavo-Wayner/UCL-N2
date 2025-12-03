@@ -32,7 +32,7 @@ namespace UCL_N2
 
         private void OnLogout(object sender, RoutedEventArgs e)
         {
-            Atual.Usuario = null;
+            Persistent.Usuario = null;
             LoginWindow win = new LoginWindow();
             win.Show();
             this.Close();
