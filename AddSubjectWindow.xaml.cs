@@ -43,7 +43,7 @@ namespace UCL_N2
 
         private void OnPressAdd(object sender, RoutedEventArgs e)
         {
-            if(string.IsNullOrWhiteSpace(InputTitulo.Text.Trim()) || string.IsNullOrWhiteSpace(InputProf.Text.Trim()) || string.IsNullOrWhiteSpace(InputTurma.Text.Trim()))
+            if (string.IsNullOrWhiteSpace(InputTitulo.Text.Trim()) || string.IsNullOrWhiteSpace(InputProf.Text.Trim()) || string.IsNullOrWhiteSpace(InputTurma.Text.Trim()))
             {
                 MessageBox.Show("Preencha todos o campos para adicionar!");
                 return;
@@ -53,13 +53,13 @@ namespace UCL_N2
             using var connection = new SqliteConnection("Data Source=tables.db");
             connection.Open();
 
-            using(var cmd = connection.CreateCommand())
+            using (var cmd = connection.CreateCommand())
             {
                 cmd.CommandText = "SELECT * FROM Cadastros WHERE Nome = $nome AND Papel = 'Professor'";
                 cmd.Parameters.AddWithValue("$nome", InputProf.Text.Trim());
 
                 using var reader = cmd.ExecuteReader();
-                if(!reader.Read())
+                if (!reader.Read())
                 {
                     MessageBox.Show($"Não existe nenhum(a) professor(a) chamado(a) {InputProf.Text.Trim()}!");
                     return;
@@ -104,7 +104,7 @@ namespace UCL_N2
             using var command = connection.CreateCommand();
 
             command.CommandText = @"
-                SELECT m.Id, m.Titulo, c.Nome AS ProfessorNome, m.Turma
+                SELECT m.Id, m.Titulo, c.Nome AS ProfessorNome, m.Turma, m.ProfessorId
                 FROM Materias m
                 JOIN Cadastros c ON m.ProfessorId = c.Id;
             ";
@@ -118,7 +118,8 @@ namespace UCL_N2
                     Id = reader.GetInt32(0),
                     Titulo = reader.GetString(1),
                     Professor = reader.GetString(2),
-                    Turma = reader.GetString(3)
+                    Turma = reader.GetString(3),
+                    ProfessorId = reader.GetInt32(4)
                 };
 
                 materias.Add(m);
@@ -157,7 +158,14 @@ namespace UCL_N2
 
         private void OnPressSave(object sender, RoutedEventArgs e)
         {
-            
+
+        }
+
+        private void OnReturn(object sender, RoutedEventArgs e)
+        {
+            AdminWindow win = new();
+            win.Show();
+            this.Close();
         }
     }
 }

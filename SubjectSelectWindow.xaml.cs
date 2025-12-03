@@ -39,23 +39,25 @@ namespace UCL_N2
 
             using var command = connection.CreateCommand();
             command.CommandText = @"
-                SELECT m.Id, m.Titulo, c.Nome AS ProfessorNome, m.Turma
+                SELECT m.Id, m.Titulo, c.Nome AS ProfessorNome, m.Turma, m.ProfessorId
                 FROM Materias m
-                JOIN Cadastros c ON m.ProfessorId = c.Id;
+                JOIN Cadastros c ON m.ProfessorId = c.Id
+                WHERE m.ProfessorId = $id;
             ";
 
             command.Parameters.AddWithValue("$id", Atual.Usuario?.Id);
 
             using var reader = command.ExecuteReader();
 
-            while(reader.Read())
+            while (reader.Read())
             {
                 Materia m = new Materia
                 {
                     Id = reader.GetInt32(0),
                     Titulo = reader.GetString(1),
                     Professor = reader.GetString(2),
-                    Turma = reader.GetString(3)
+                    Turma = reader.GetString(3),
+                    ProfessorId = reader.GetInt32(4)
                 };
 
                 Atual.materias!.Add(m);
@@ -71,8 +73,8 @@ namespace UCL_N2
                 return;
             }
             Console.WriteLine(MateriasDropDown.SelectedIndex);
-            Atual.materia = Atual.materias![MateriasDropDown.SelectedIndex-1];
-            GradesWindow win = new();
+            Atual.materia = Atual.materias![MateriasDropDown.SelectedIndex - 1];
+            ProfessorWindow win = new();
             win.Show();
             this.Close();
         }
