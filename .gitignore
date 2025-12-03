@@ -36,3 +36,6 @@ packages/
 *.g.cs
 *.g.i.cs
 *.xaml.cs~
+
+# --- IONIDE ---
+.fake
