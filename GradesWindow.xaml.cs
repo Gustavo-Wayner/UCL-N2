@@ -16,7 +16,7 @@ namespace UCL_N2
 {
     public partial class GradesWindow : Window
     {
-        private ObservableCollection<DadosBoletim> dados = new();
+        public ObservableCollection<DadosBoletim> dados { get; }= new();
         public GradesWindow()
         {
             InitializeComponent();
@@ -61,19 +61,24 @@ namespace UCL_N2
                 {
                     Titulo = reader.GetString(0),
                     Professor = reader.GetString(1),
-                    Faltas = reader.GetInt32(2),
-                    N1 = reader.GetInt32(3),
-                    P1 = reader.GetInt32(4),
-                    N2 = reader.GetInt32(5),
-                    P2 = reader.GetInt32(6),
-                    Media = reader.GetInt32(7),
-                    Estado = reader.GetString(8),
+                    Faltas = GetNullableFloat(reader, 2),
+                    N1 = GetNullableFloat(reader, 3),
+                    P1 = GetNullableFloat(reader, 4),
+                    N2 = GetNullableFloat(reader, 5),
+                    P2 = GetNullableFloat(reader, 6),
+                    Media = GetNullableFloat(reader, 7),
+                    Estado = reader.IsDBNull(8) ? null : reader.GetString(8),
                     ProfessorId = reader.GetInt32(9),
                     Id = reader.GetInt32(10)
                 };
 
                 dados.Add(d);
             }
+        }
+
+        private float? GetNullableFloat(SqliteDataReader reader, int ordinal)
+        {
+            return reader.IsDBNull(ordinal) ? (float?)null : Convert.ToSingle(reader.GetDouble(ordinal));
         }
     }
 }

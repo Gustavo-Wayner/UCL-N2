@@ -9,7 +9,7 @@
     <Grid>
         <DataGrid x:Name="GridBoletim" ItemsSource="{Binding dados}" AutoGenerateColumns="False" IsReadOnly="False" Margin="0,41,0,10" CanUserDeleteRows="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Materia" Binding="{Binding Materia}" IsReadOnly="True" Width="*" />
+                <DataGridTextColumn Header="Materia" Binding="{Binding Titulo}" IsReadOnly="True" Width="*" />
                 <DataGridTextColumn Header="Professor" Binding="{Binding Professor}" IsReadOnly="True" Width="*" />
                 <DataGridTextColumn Header="Faltas%" Binding="{Binding Faltas}" IsReadOnly="True" Width="50" />
                 <DataGridTextColumn Header="N1" Binding="{Binding N1}" IsReadOnly="True" Width="50"/>
@@ -17,7 +17,7 @@
                 <DataGridTextColumn Header="N2" Binding="{Binding N2}" IsReadOnly="True" Width="50"/>
                 <DataGridTextColumn Header="P2" Binding="{Binding P2}" IsReadOnly="True" Width="50"/>
                 <DataGridTextColumn Header="Média" Binding="{Binding Media}" IsReadOnly="True" Width="50" />
-                <DataGridTextColumn Header="Estado" Binding="{Binding Turma}" IsReadOnly="True" Width="100" />
+                <DataGridTextColumn Header="Estado" Binding="{Binding Estado}" IsReadOnly="True" Width="100" />
             </DataGrid.Columns>
         </DataGrid>
 

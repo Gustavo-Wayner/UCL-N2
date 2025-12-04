@@ -11,16 +11,20 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Collections.Specialized;
+using System.ComponentModel;
 
 namespace UCL_N2
 {
     public partial class ProfessorWindow : Window
     {
-        public ObservableCollection<DadosClasse> dados = new();
+        public ObservableCollection<DadosClasse> dados { get; } = new();
         public ProfessorWindow()
         {
             InitializeComponent();
             DataContext = this;
+
+            dados.CollectionChanged += Dados_CollectionChanged;
 
             LoadDados();
         }
@@ -43,9 +47,9 @@ namespace UCL_N2
                 mat.N1, mat.P1, mat.N2, mat.P2,
                 mat.Media,
                 mat.Estado,
-                m.ProfessorId,
+                mat.Id,
                 mat.AlunoId,
-                mat.Id
+                m.Id
                 FROM Matriculas mat                
 
                 JOIN Cadastros cAluno   ON mat.AlunoId = cAluno.Id
@@ -61,14 +65,14 @@ namespace UCL_N2
                 DadosClasse d = new DadosClasse
                 {
                     Aluno = reader.GetString(0),
-                    Faltas = reader.GetInt32(1),
-                    N1 = reader.GetInt32(2),
-                    P1 = reader.GetInt32(3),
-                    N2 = reader.GetInt32(4),
-                    P2 = reader.GetInt32(5),
-                    Media = reader.GetInt32(6),
-                    Estado = reader.GetString(7),
-                    ProfessorId = reader.GetInt32(8),
+                    Faltas = GetNullableFloat(reader, 1),
+                    N1 = GetNullableFloat(reader, 2),
+                    P1 = GetNullableFloat(reader, 3),
+                    N2 = GetNullableFloat(reader, 4),
+                    P2 = GetNullableFloat(reader, 5),
+                    Media = GetNullableFloat(reader, 6),
+                    Estado = reader.IsDBNull(7) ? null : reader.GetString(7),
+                    MateriaId = reader.GetInt32(8),
                     AlunoId = reader.GetInt32(9),
                     Id = reader.GetInt32(10)
                 };
@@ -79,7 +83,26 @@ namespace UCL_N2
 
         private void OnDelPress(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.Delete)
+            {
+                e.Handled = true;
+                var selected = GridBoletim.SelectedItem as DadosClasse;
+                if (selected == null) return;
 
+                using var connection = new SqliteConnection("Data Source=tables.db");
+                connection.Open();
+
+                using var command = connection.CreateCommand();
+
+                command.CommandText = @"
+                    DELETE FROM Matriculas
+                    WHERE Id = $id;
+                ";
+                command.Parameters.AddWithValue("$id", selected.Id);
+                command.ExecuteNonQuery();
+
+                LoadDados();
+            }
         }
 
         private void OnAddPress(object sender, RoutedEventArgs e)
@@ -98,32 +121,94 @@ namespace UCL_N2
         private void AddAluno()
         {
             if (string.IsNullOrWhiteSpace(Input.Text.Trim())) return;
+
+            Input.Text = Persistent.TitleCase(Input.Text.Trim());
+
             using SqliteConnection connection = new("Data Source=tables.db");
             connection.Open();
 
             using SqliteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM Cadastros WHERE Papel = 'Aluno' AND Nome = $nome;";
-            command.Parameters.AddWithValue("$nome", Input.Text.Trim());
+            command.Parameters.AddWithValue("$nome", Input.Text);
 
-            using (SqliteDataReader reader = command.ExecuteReader())
+            using SqliteDataReader reader = command.ExecuteReader();
+            if (!reader.Read())
             {
-                if (!reader.Read())
+                MessageBox.Show($"Não existem alunos cadatrados com o nome de {Input.Text}");
+                return;
+            }
+
+            int Id = reader.GetInt32(0);
+            reader.Close();
+            command.CommandText = "INSERT INTO Matriculas (MateriaId, AlunoId) VALUES ($materiaId, $alunoId);";
+            command.Parameters.AddWithValue("$materiaId", Persistent.materia!.Id);
+            command.Parameters.AddWithValue("$alunoId", Id);
+            command.ExecuteNonQuery();
+
+            LoadDados();
+            Input.Text = string.Empty;
+        }
+        private float GetNullableFloat(SqliteDataReader reader, int ordinal)
+        {
+            return reader.IsDBNull(ordinal) ? 0f : Convert.ToSingle(reader.GetDouble(ordinal));
+        }
+
+        private void Dados_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (DadosClasse d in e.NewItems)
                 {
-                    MessageBox.Show($"Não existem alunos cadatrados com o nome de {Input.Text.Trim()}");
-                    return;
+                    d.PropertyChanged += Dado_PropertyChanged;
                 }
             }
 
-            int Id;
-
-            using (SqliteDataReader reader = command.ExecuteReader())
+            if (e.OldItems != null)
             {
-                Id = reader.GetInt32(0);
+                foreach (DadosClasse d in e.OldItems)
+                {
+                    d.PropertyChanged -= Dado_PropertyChanged;
+                }
             }
-
-            Input.Text = "";
-
-            command.CommandText = "INSERT INTO Matriculas (Student;";
         }
+
+        private void Dado_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (sender is not DadosClasse d)
+                return;
+
+            if (e.PropertyName is not ("Faltas" or "N1" or "P1" or "N2" or "P2" or "Media" or "Estado"))
+                return;
+
+            using var connection = new SqliteConnection("Data source=tables.db");
+            connection.Open();
+
+            using var command = connection.CreateCommand();
+            command.CommandText = @"
+                UPDATE Matriculas
+                SET FaltasPcnt = $faltas,
+                    N1         = $n1,
+                    P1         = $p1,
+                    N2         = $n2,
+                    P2         = $p2,
+                    Media      = $media,
+                    Estado     = $estado
+                WHERE Id = $id;
+            ";
+
+            object DbOrNull(float? v) => v.HasValue ? (object)v.Value : DBNull.Value;
+
+            command.Parameters.AddWithValue("$faltas", DbOrNull(d.Faltas));
+            command.Parameters.AddWithValue("$n1", DbOrNull(d.N1));
+            command.Parameters.AddWithValue("$p1", DbOrNull(d.P1));
+            command.Parameters.AddWithValue("$n2", DbOrNull(d.N2));
+            command.Parameters.AddWithValue("$p2", DbOrNull(d.P2));
+            command.Parameters.AddWithValue("$media", DbOrNull(d.Media));
+            command.Parameters.AddWithValue("$estado", (object?)d.Estado ?? DBNull.Value);
+            command.Parameters.AddWithValue("$id", d.Id);
+
+            command.ExecuteNonQuery();
+        }
+
     }
 }

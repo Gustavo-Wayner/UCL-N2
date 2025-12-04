@@ -14,7 +14,7 @@
                 <DataGridTextColumn Header="N2" Binding="{Binding N2}" IsReadOnly="False" Width="50" />
                 <DataGridTextColumn Header="P2" Binding="{Binding P2}" IsReadOnly="False" Width="50" />
                 <DataGridTextColumn Header="Média" Binding="{Binding Media}" IsReadOnly="True" Width="50" />
-                <DataGridTextColumn Header="Estado" Binding="{Binding Turma}" IsReadOnly="True" Width="100" />
+                <DataGridTextColumn Header="Estado" Binding="{Binding Estado}" IsReadOnly="True" Width="100" />
             </DataGrid.Columns>
         </DataGrid>
 
