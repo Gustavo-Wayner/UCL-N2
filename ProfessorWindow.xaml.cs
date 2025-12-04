@@ -42,20 +42,21 @@ namespace UCL_N2
             connection.Open();
 
             using var command = connection.CreateCommand();
-            command.CommandText = @"Select cAluno.Nome as Aluno,
-                mat.FaltasPcnt,
-                mat.N1, mat.P1, mat.N2, mat.P2,
-                mat.Media,
-                mat.Estado,
-                mat.Id,
-                mat.AlunoId,
-                m.Id
-                FROM Matriculas mat                
-
-                JOIN Cadastros cAluno   ON mat.AlunoId = cAluno.Id
-                JOIN Materias m         ON mat.MateriaId = m.Id
+            command.CommandText = @"
+                SELECT cAluno.Nome       AS Aluno,
+                       mat.FaltasPcnt,
+                       mat.N1, mat.P1, mat.N2, mat.P2,
+                       mat.Media,
+                       mat.Estado,
+                       mat.Id            AS MatriculaId,
+                       mat.AlunoId,
+                       mat.MateriaId
+                FROM Matriculas mat
+                JOIN Cadastros cAluno ON mat.AlunoId  = cAluno.Id
+                JOIN Materias  m      ON mat.MateriaId = m.Id
                 WHERE m.Id = $materiaId AND cAluno.Papel = 'Aluno';
             ";
+
             command.Parameters.AddWithValue("$materiaId", Persistent.materia!.Id);
 
             using SqliteDataReader reader = command.ExecuteReader();
@@ -72,9 +73,9 @@ namespace UCL_N2
                     P2 = GetNullableFloat(reader, 5),
                     Media = GetNullableFloat(reader, 6),
                     Estado = reader.IsDBNull(7) ? null : reader.GetString(7),
-                    MateriaId = reader.GetInt32(8),
+                    Id = reader.GetInt32(8),
                     AlunoId = reader.GetInt32(9),
-                    Id = reader.GetInt32(10)
+                    MateriaId = reader.GetInt32(10)
                 };
 
                 dados.Add(d);

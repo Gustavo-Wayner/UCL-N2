@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:UCL_N2" mc:Ignorable="d" Title="AddSubjectWindow" Height="450" Width="800">
     <Grid>
-        <DataGrid x:Name="GridCadastros" ItemsSource="{Binding materias}" AutoGenerateColumns="False" IsReadOnly="False" Margin="0,101,0,10" CanUserDeleteRows="False" PreviewKeyDown="OnDelPress">
+        <DataGrid CanUserAddRows="False" x:Name="GridCadastros" ItemsSource="{Binding materias}" AutoGenerateColumns="False" IsReadOnly="False" Margin="0,101,0,10" CanUserDeleteRows="False" PreviewKeyDown="OnDelPress">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Titulo" Binding="{Binding Titulo}" IsReadOnly="True" Width="*" />

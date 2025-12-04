@@ -75,7 +75,7 @@ namespace UCL_N2
                 cmd.CommandText = "SELECT * FROM Materias WHERE Titulo = $titulo AND ProfessorId = $profId AND Turma = $turma;";
                 cmd.Parameters.AddWithValue("$titulo", InputTitulo.Text);
                 cmd.Parameters.AddWithValue("$profId", GetProfId(connection, InputProf.Text));
-                cmd.Parameters.AddWithValue("$turma", InputTurma);
+                cmd.Parameters.AddWithValue("$turma", InputTurma.Text);
 
                 using SqliteDataReader compare = cmd.ExecuteReader();
                 if (compare.Read())
@@ -167,9 +167,19 @@ namespace UCL_N2
 
                 using var command = connection.CreateCommand();
 
-                command.CommandText = "DELETE FROM Materias WHERE Id = $id;";
+                command.CommandText = "SELECT COUNT(*) FROM Matriculas WHERE MateriaId = $id;";
                 command.Parameters.AddWithValue("$id", selected.Id);
+                long qtd = (long)command.ExecuteScalar()!;
+
+                if (qtd > 0)
+                {
+                    MessageBox.Show("Não é possível apagar uma matéria que já tem alunos matriculados.");
+                    return;
+                }
+
+                command.CommandText = "DELETE FROM Materias WHERE Id = $id;";
                 command.ExecuteNonQuery();
+
 
                 LoadSubjects();
             }

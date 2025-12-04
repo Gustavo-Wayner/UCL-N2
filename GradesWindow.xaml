@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="GradesWindow" Height="450" Width="800">
     <Grid>
-        <DataGrid x:Name="GridBoletim" ItemsSource="{Binding dados}" AutoGenerateColumns="False" IsReadOnly="False" Margin="0,41,0,10" CanUserDeleteRows="False">
+        <DataGrid CanUserAddRows="False" x:Name="GridBoletim" ItemsSource="{Binding dados}" AutoGenerateColumns="False" IsReadOnly="False" Margin="0,41,0,10" CanUserDeleteRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Materia" Binding="{Binding Titulo}" IsReadOnly="True" Width="*" />
                 <DataGridTextColumn Header="Professor" Binding="{Binding Professor}" IsReadOnly="True" Width="*" />

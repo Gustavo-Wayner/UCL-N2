@@ -75,36 +75,92 @@ namespace UCL_N2
         public float? Faltas
         {
             get => _faltas;
-            set { _faltas = value; OnNotasChanged(); OnPropertyChanged(); }
+            set
+            {
+                if (value.HasValue && (value.Value < 0 || value.Value > 100))
+                {
+                    MessageBox.Show("A porcentagem de faltas precisa estar entre 0 e 100.");
+                    return;
+                }
+
+                _faltas = value;
+                OnNotasChanged();
+                OnPropertyChanged();
+            }
         }
 
         float? _n1;
         public float? N1
         {
             get => _n1;
-            set { _n1 = value; OnNotasChanged(); OnPropertyChanged(); }
+            set
+            {
+                if (value.HasValue && (value.Value < 0 || value.Value > 10))
+                {
+                    MessageBox.Show("Todas as notas precisam estar entre 0 e 10.");
+                    return;
+                }
+
+                _n1 = value;
+                OnNotasChanged();
+                OnPropertyChanged();
+            }
         }
 
         float? _p1;
         public float? P1
         {
             get => _p1;
-            set { _p1 = value; OnNotasChanged(); OnPropertyChanged(); }
+            set
+            {
+                if (value.HasValue && (value.Value < 0 || value.Value > 10))
+                {
+                    MessageBox.Show("Todas as notas precisam estar entre 0 e 10.");
+                    return;
+                }
+
+                _p1 = value;
+                OnNotasChanged();
+                OnPropertyChanged();
+            }
         }
 
         float? _n2;
         public float? N2
         {
             get => _n2;
-            set { _n2 = value; OnNotasChanged(); OnPropertyChanged(); }
+            set
+            {
+                if (value.HasValue && (value.Value < 0 || value.Value > 10))
+                {
+                    MessageBox.Show("Todas as notas precisam estar entre 0 e 10.");
+                    return;
+                }
+
+                _n2 = value;
+                OnNotasChanged();
+                OnPropertyChanged();
+            }
         }
 
         float? _p2;
         public float? P2
         {
             get => _p2;
-            set { _p2 = value; OnNotasChanged(); OnPropertyChanged(); }
+            set
+            {
+                if (value.HasValue && (value.Value < 0 || value.Value > 10))
+                {
+                    MessageBox.Show("Todas as notas precisam estar entre 0 e 10.");
+                    return;
+                }
+
+                _p2 = value;
+                OnNotasChanged();
+                OnPropertyChanged();
+            }
         }
+
 
         float? _media;
         public float? Media
@@ -133,17 +189,6 @@ namespace UCL_N2
                 float n2 = N2 ?? 0;
                 float p2 = P2 ?? 0;
 
-                if(n1 < 0 || n1 > 10 || p1 < 0 || p1 > 10 || n2 < 0 || n2 > 10 || p2 < 0 || p2 > 10)
-                {
-                    MessageBox.Show("Todas as notas precisam estar entre 0 e 10");
-                    return;
-                }
-                if (Faltas < 0 || Faltas > 100)
-                {
-                    MessageBox.Show("A Porcentagem de faltas precisa estar entre 0 e 100");
-                    return;
-                }
-
                 Media = ((n1*0.3f) + (p1*0.7f) + (n2*0.3f) + (p2*0.7f)) / 2.0f;
 
                 if (Media >= 7 && (Faltas ?? 0) <= 25)
@@ -162,5 +207,4 @@ namespace UCL_N2
                 Estado = null;
         }
     }
-
 }
